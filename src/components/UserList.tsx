@@ -26,6 +26,9 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
             setUsers(data.items);
           } else {
             console.error("Error fetching data:", response.status);
+            // Log the response text for additional details
+            const errorText = await response.text();
+            console.error("Response text:", errorText);
           }
         } else {
           setUsers([]);
