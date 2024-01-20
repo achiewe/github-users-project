@@ -7,12 +7,13 @@ interface UserListProps {
 
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
+  const achi = "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";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (inputValue.trim() !== "") {
-          const token = "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"; // Replace with your actual token
+          const token = process.env.REACT_APP_GITHUB_ACCESS_TOKEN; // Replace with your actual token
           const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
 
           const response = await fetch(apiUrl, {
