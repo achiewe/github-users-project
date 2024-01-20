@@ -80,7 +80,7 @@ const UserList = (): JSX.Element => {
   return (
     <div
       className={`${
-        InputValue.length > 0 ? "flex" : "none"
+        InputValue.length > 0 ? "flex" : "hidden"
       } flex-col py-[25px] w-full shadow-lg mb-[79px] max-w-[500px] md:max-w-[500px] md:mb-[236px] md:pt-[40px] md:pb-[40px] md:gap-[20px] lg:pb-[48px] lg:pt-[44px] lg:max-w-[730px] bg-[#FEFEFE] gap-[24px]`}
     >
       <div className="flex flex-col items-start gap-[10px] hover:bg-[#d8d8d8] cursor-pointer pt-[10px]">
