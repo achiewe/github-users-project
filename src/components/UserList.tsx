@@ -10,13 +10,9 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
 
   useEffect(() => {
     if (inputValue.trim() !== "") {
-      const token = "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"; // Replace with your actual token
-      const apiUrl = `https://api.github.com/search/users?q=${inputValue}&access_token=${token}`;
-
-      fetch(apiUrl)
+      fetch(`https://api.github.com/search/users?q=${inputValue}`)
         .then((response) => response.json())
-        .then((data) => setUsers(data.items))
-        .catch((error) => console.error("Error fetching data:", error));
+        .then((data) => setUsers(data.items));
     } else {
       setUsers([]);
     }
