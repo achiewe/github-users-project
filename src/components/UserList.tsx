@@ -11,6 +11,8 @@ const UserList = (): JSX.Element => {
     (store: Rootstate) => store.inputValue.inputValue
   );
 
+  const userInfo = useSelector((store: Rootstate) => store.userInfo.userInfo);
+
   const dispatch = useDispatch();
   console.log(InputValue.length);
 
@@ -42,40 +44,40 @@ const UserList = (): JSX.Element => {
   //   }
   // };
 
-  // const fetchUserInfo = async () => {
-  //   try {
-  //     console.log("shevedii");
-  //     const response = await axios.get(
-  //       `https://api.github.com/search/users?q=${InputValue}`,
-  //       { headers: { Authorization: `Bearer YOUR_ACCESS_TOKEN` } }
-  //     );
+  const fetchUserInfo = async () => {
+    try {
+      console.log("shevedii");
+      const response = await axios.get(
+        `https://api.github.com/search/users?q=${InputValue}`,
+        { headers: { Authorization: `Bearer YOUR_ACCESS_TOKEN` } }
+      );
 
-  //     const data = response.data;
-  //     dispatch(setuserInfo(data));
-  //     console.log(data);
-  //   } catch (error) {
-  //     if (axios.isCancel(error)) {
-  //       console.log("Request canceled", error.message);
-  //     } else {
-  //       handleRequestError(error as AxiosError);
-  //     }
-  //   }
-  // };
+      const data = response.data;
+      dispatch(setuserInfo(data));
+      console.log(data);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message);
+      } else {
+        console.log("errrorrriaaa joooo");
+      }
+    }
+  };
 
   // const delayedFetchUserInfo = debounce(fetchUserInfo, 500);
 
-  // useEffect(() => {
-  //   const source = axios.CancelToken.source();
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+    fetchUserInfo();
+    // delayedFetchUserInfo();
 
-  //   delayedFetchUserInfo();
-
-  //   return () => {
-  //     // Cancel the request when the component unmounts or when the input changes
-  //     source.cancel(
-  //       "Request canceled due to component unmount or input change"
-  //     );
-  //   };
-  // }, [InputValue, delayedFetchUserInfo]);
+    return () => {
+      // Cancel the request when the component unmounts or when the input changes
+      source.cancel(
+        "Request canceled due to component unmount or input change"
+      );
+    };
+  }, [InputValue]);
 
   return (
     <div
@@ -83,19 +85,24 @@ const UserList = (): JSX.Element => {
         InputValue.length > 0 ? "flex" : "hidden"
       } flex-col py-[25px] w-full shadow-lg mb-[79px] max-w-[500px] md:max-w-[500px] md:mb-[236px] md:pt-[40px] md:pb-[40px] md:gap-[20px] lg:pb-[48px] lg:pt-[44px] lg:max-w-[730px] bg-[#FEFEFE] gap-[24px]`}
     >
-      <div className="flex flex-col items-start gap-[10px] hover:bg-[#d8d8d8] cursor-pointer pt-[10px]">
-        <div className="flex flex-row items-center gap-[20px] md:gap-[40px] px-[25px] md:px-[40px] lg:px-[50px]">
-          <img
-            src={achiewe}
-            alt="Description of the image"
-            className="w-[50px] h-[50px] rounded-[30px]"
-          />
-          <h1 className="font-bold text-[16px] md:text-[26px] text-[#2B3442] leading-[23.7px] [word-spacing:-5px]">
-            achiewe
-          </h1>
+      {userInfo.map((item) => (
+        <div
+          key={item.id}
+          className="flex flex-col items-start gap-[10px] hover:bg-[#d8d8d8] cursor-pointer pt-[10px]"
+        >
+          <div className="flex flex-row items-center gap-[20px] md:gap-[40px] px-[25px] md:px-[40px] lg:px-[50px]">
+            <img
+              src={item.avatar_url}
+              alt="Description of the image"
+              className="w-[50px] h-[50px] rounded-[30px]"
+            />
+            <h1 className="font-bold text-[16px] md:text-[26px] text-[#2B3442] leading-[23.7px] [word-spacing:-5px]">
+              {item.html_url}
+            </h1>
+          </div>
+          <hr className="w-full" />
         </div>
-        <hr className="w-full" />
-      </div>
+      ))}
     </div>
   );
 };
