@@ -1,8 +1,6 @@
 import { useState } from "react";
 import SearchInput from "./components/SearchInput";
-import Ssoso from "./components/Ssoso";
 import UserList from "./components/UserList";
-import GithubUser from "../types";
 
 function App(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>("");

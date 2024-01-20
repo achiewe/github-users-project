@@ -8,29 +8,44 @@ interface UserListProps {
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
 
+  useEffect(() => {
+    if (inputValue.trim() !== "") {
+      fetch(`https://api.github.com/search/users?q=${inputValue}`)
+        .then((response) => response.json())
+        .then((data) => setUsers(data.items));
+    } else {
+      setUsers([]);
+    }
+  }, [inputValue]);
+
+  const handleUserClick = (username: any) => {
+    window.open(`https://github.com/${username}`, "_blank");
+  };
+
   return (
     <div
       className={`${
         inputValue.length > 0 ? "flex" : "hidden"
       } flex-col py-[25px] w-full shadow-lg mb-[79px] max-w-[500px] md:max-w-[500px] md:mb-[236px] md:pt-[40px] md:pb-[40px] md:gap-[20px] lg:pb-[48px] lg:pt-[44px] lg:max-w-[730px] bg-[#FEFEFE] gap-[24px]`}
     >
-      {users.map((item) => (
-        <div
-          key={item.id}
+      {users.map((user) => (
+        <li
+          key={user.id}
+          onClick={() => handleUserClick(user.login)}
           className="flex flex-col items-start gap-[10px] hover:bg-[#d8d8d8] cursor-pointer pt-[10px]"
         >
           <div className="flex flex-row items-center gap-[20px] md:gap-[40px] px-[25px] md:px-[40px] lg:px-[50px]">
             <img
-              src={item.avatar_url}
-              alt="Description of the image"
+              src={user.avatar_url}
+              alt={`${user.login}'s avatar`}
               className="w-[50px] h-[50px] rounded-[30px]"
             />
             <h1 className="font-bold text-[16px] md:text-[26px] text-[#2B3442] leading-[23.7px] [word-spacing:-5px]">
-              {item.html_url}
+              {user.login}
             </h1>
           </div>
           <hr className="w-full" />
-        </div>
+        </li>
       ))}
     </div>
   );
