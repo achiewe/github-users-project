@@ -10,15 +10,19 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
 
   useEffect(() => {
     if (inputValue.trim() !== "") {
-      fetch(`https://api.github.com/search/users?q=${inputValue}`)
+      const token = "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"; // Replace with your actual token
+      const apiUrl = `https://api.github.com/search/users?q=${inputValue}&access_token=${token}`;
+
+      fetch(apiUrl)
         .then((response) => response.json())
-        .then((data) => setUsers(data.items));
+        .then((data) => setUsers(data.items))
+        .catch((error) => console.error("Error fetching data:", error));
     } else {
       setUsers([]);
     }
   }, [inputValue]);
 
-  const handleUserClick = (username: any) => {
+  const handleUserClick = (username: string) => {
     window.open(`https://github.com/${username}`, "_blank");
   };
 
@@ -28,7 +32,7 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
         inputValue.length > 0 ? "flex" : "hidden"
       } flex-col py-[25px] w-full shadow-lg mb-[79px] max-w-[500px] md:max-w-[500px] md:mb-[236px] md:pt-[40px] md:pb-[40px] md:gap-[20px] lg:pb-[48px] lg:pt-[44px] lg:max-w-[730px] bg-[#FEFEFE] gap-[24px]`}
     >
-      {users.map((user) => (
+      {users?.map((user) => (
         <li
           key={user.id}
           onClick={() => handleUserClick(user.login)}
