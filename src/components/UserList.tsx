@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import achiewe from "../../public/assets/achieve.jpeg";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -13,12 +13,42 @@ const UserList = (): JSX.Element => {
 
   const dispatch = useDispatch();
 
+  const handleRequestError = (error: AxiosError) => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log("Response data:", error.response.data);
+      console.log("Response status:", error.response.status);
+      console.log("Response headers:", error.response.headers);
+
+      if (
+        error.response.status === 403 &&
+        error.response.headers["retry-after"]
+      ) {
+        const retryAfter =
+          parseInt(error.response.headers["retry-after"], 10) * 1000;
+        // Wait for the specified time before retrying
+        setTimeout(() => {
+          delayedFetchUserInfo();
+        }, retryAfter);
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.log("No response received:", error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log("Error setting up the request:", error.message);
+    }
+  };
+
   const fetchUserInfo = async () => {
     try {
       console.log("shevedii");
       const response = await axios.get(
-        `https://api.github.com/search/users?q=${InputValue}`
+        `https://api.github.com/search/users?q=${InputValue}`,
+        { headers: { Authorization: `Bearer YOUR_ACCESS_TOKEN` } }
       );
+
       const data = response.data;
       dispatch(setuserInfo(data));
       console.log(data);
@@ -26,10 +56,10 @@ const UserList = (): JSX.Element => {
       if (axios.isCancel(error)) {
         console.log("Request canceled", error.message);
       } else {
-        console.log("error", error);
+        handleRequestError(error as AxiosError);
       }
     }
-  };
+  }; // <-- Move this closing brace to here
 
   const delayedFetchUserInfo = debounce(fetchUserInfo, 500);
 
