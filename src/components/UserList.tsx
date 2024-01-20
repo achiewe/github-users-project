@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { Rootstate } from "../features/store";
 import { setuserInfo } from "../features/UserInfoSlice";
+import { debounce } from "lodash";
 
 const UserList = (): JSX.Element => {
   const InputValue = useSelector(
@@ -12,26 +13,38 @@ const UserList = (): JSX.Element => {
 
   const dispatch = useDispatch();
 
-  const userInfo = useSelector((store: Rootstate) => store.userInfo.userInfo);
+  const fetchUserInfo = async () => {
+    try {
+      console.log("shevedii");
+      const response = await axios.get(
+        `https://api.github.com/search/users?q=${InputValue}`
+      );
+      const data = response.data;
+      dispatch(setuserInfo(data));
+      console.log(data);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message);
+      } else {
+        console.log("error", error);
+      }
+    }
+  };
+
+  const delayedFetchUserInfo = debounce(fetchUserInfo, 500);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        console.log("shevedii");
-        const response = await axios.get(
-          `https://api.github.com/search/users?q=${InputValue}`
-        );
-        const data = response.data;
-        setTimeout(() => {
-          dispatch(setuserInfo(data));
-        }, 2000);
-        console.log(data);
-      } catch (error) {
-        console.log("erorr");
-      }
+    const source = axios.CancelToken.source();
+
+    delayedFetchUserInfo();
+
+    return () => {
+      // Cancel the request when the component unmounts or when the input changes
+      source.cancel(
+        "Request canceled due to component unmount or input change"
+      );
     };
-    fetchUserInfo();
-  }, [InputValue]);
+  }, [InputValue, delayedFetchUserInfo]);
 
   return (
     <div className="flex flex-col py-[25px] w-full shadow-lg mb-[79px] max-w-[500px] md:max-w-[500px] md:mb-[236px] md:pt-[40px] md:pb-[40px] md:gap-[20px] lg:pb-[48px] lg:pt-[44px] lg:max-w-[730px] bg-[#FEFEFE] gap-[24px]">
