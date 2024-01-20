@@ -7,15 +7,41 @@ interface UserListProps {
 
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // Specify the type for loading
+  const [error, setError] = useState<string | null>(null); // Specify the type for error
 
   useEffect(() => {
-    if (inputValue.trim() !== "") {
-      fetch(`https://api.github.com/search/users?q=${inputValue}`)
-        .then((response) => response.json())
-        .then((data) => setUsers(data.items));
-    } else {
-      setUsers([]);
-    }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        if (inputValue.trim() !== "") {
+          const token = "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"; // Replace with your actual token
+          const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
+
+          const response = await fetch(apiUrl, {
+            headers: {
+              Authorization: `token ${token}`,
+            },
+          });
+
+          if (response.status === 200) {
+            const data = await response.json();
+            setUsers(data.items);
+          } else {
+            setError(`Error: ${response.status} - ${response.statusText}`);
+          }
+        } else {
+          setUsers([]);
+        }
+      } catch (error: any) {
+        setError(`Error fetching data: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [inputValue]);
 
   const handleUserClick = (username: string) => {
