@@ -7,7 +7,6 @@ interface UserListProps {
 
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
-  const achi = "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";
 
   useEffect(() => {
     const fetchData = async () => {
