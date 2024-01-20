@@ -59,7 +59,7 @@ const UserList = (): JSX.Element => {
         handleRequestError(error as AxiosError);
       }
     }
-  }; // <-- Move this closing brace to here
+  };
 
   const delayedFetchUserInfo = debounce(fetchUserInfo, 500);
 
