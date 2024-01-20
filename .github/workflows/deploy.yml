@@ -11,7 +11,6 @@ jobs:
 
     env:
       REACT_APP_GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -30,4 +29,4 @@ jobs:
       - name: Deploy to GitHub Pages
         run: npm run deploy
         env:
-          REACT_APP_GITHUB_ACCESS_TOKEN: ${{ env.REACT_APP_GITHUB_ACCESS_TOKEN }}
+          REACT_APP_GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
