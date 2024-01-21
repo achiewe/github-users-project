@@ -5,6 +5,7 @@ interface UserListProps {
   inputValue: string;
 }
 
+// function userList
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
 
