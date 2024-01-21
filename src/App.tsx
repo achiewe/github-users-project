@@ -2,6 +2,7 @@ import { useState } from "react";
 import SearchInput from "./components/SearchInput";
 import UserList from "./components/UserList";
 
+// function App
 function App(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>("");
 
