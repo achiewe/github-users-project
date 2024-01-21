@@ -4,6 +4,7 @@ interface SearchInputProps {
   setInputValue(inputValue: string): void;
 }
 
+// function SearchInput
 const SearchInput = ({ setInputValue }: SearchInputProps): JSX.Element => {
   return (
     <form className="flex mt-[31px] flex-row items-center gap-[5px] justify-between w-full max-w-[500px] pl-[16px] pr-[7px] shadow-lg md:max-w-[500px] md:gap-0 md:mt-[60px] md:pr-[10px] md:pl-[32px] lg:max-w-[730px] bg-[#d8d8d8] py-[20px] lg:px-[60px] rounded-t-[15px] rounded-b-none">
