@@ -9,38 +9,47 @@ interface UserListProps {
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       if (inputValue.trim() !== "") {
-  //         const token = process.env.REACT_APP_GITHUB_ACCESS_TOKEN; // Replace with your actual token
-  //         const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (inputValue.trim() !== "") {
+          const cachedData = localStorage.getItem(inputValue);
 
-  //         const response = await fetch(apiUrl, {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         });
+          if (cachedData) {
+            // Use cached data if available
+            setUsers(JSON.parse(cachedData));
+          } else {
+            const token = "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";
+            const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
 
-  //         if (response.status === 200) {
-  //           const data = await response.json();
-  //           setUsers(data.items);
-  //         } else {
-  //           console.error("Error fetching data:", response.status);
-  //           // Log the response text for additional details
-  //           const errorText = await response.text();
-  //           console.error("Response text:", errorText);
-  //         }
-  //       } else {
-  //         setUsers([]);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
+            const response = await fetch(apiUrl, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
 
-  //   fetchData();
-  // }, [inputValue]);
+            if (response.status === 200) {
+              const data = await response.json();
+              setUsers(data.items);
+
+              // Cache the data for future use (adjust the expiration time as needed)
+              localStorage.setItem(inputValue, JSON.stringify(data.items));
+            } else {
+              console.error("Error fetching data:", response.status);
+              const errorText = await response.text();
+              console.error("Response text:", errorText);
+            }
+          }
+        } else {
+          setUsers([]);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [inputValue]);
 
   const handleUserClick = (username: string) => {
     window.open(`https://github.com/${username}`, "_blank");
