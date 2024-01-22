@@ -8,43 +8,46 @@ interface UserListProps {
 // function userList
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
   const [users, setUsers] = useState<GithubUser[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (inputValue.trim() !== "") {
-          const cachedData = localStorage.getItem(inputValue);
+          const token = "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"; // Replace with your actual token
+          const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
 
-          if (cachedData) {
-            // Use cached data if available
-            setUsers(JSON.parse(cachedData));
+          const response = await fetch(apiUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.status === 200) {
+            const data = await response.json();
+            setUsers(data.items);
           } else {
-            const token = process.env.REACT_APP_GITHUB_TOKEN;
-            const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
+            setError(`Error fetching data: ${response.status}`);
+            const errorText = await response.text();
+            console.error("Response text:", errorText);
 
-            const response = await fetch(apiUrl, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-
-            if (response.status === 200) {
-              const data = await response.json();
-              setUsers(data.items);
-
-              // Cache the data for future use (adjust the expiration time as needed)
-              localStorage.setItem(inputValue, JSON.stringify(data.items));
-            } else {
-              console.error("Error fetching data:", response.status);
-              const errorText = await response.text();
-              console.error("Response text:", errorText);
+            // Handle rate limit exceeded error
+            if (
+              response.status === 403 &&
+              errorText.includes("API rate limit exceeded")
+            ) {
+              // Implement a delay before retrying
+              setTimeout(() => {
+                fetchData();
+              }, 60 * 60 * 1000); // Retry after 1 hour
             }
           }
         } else {
           setUsers([]);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching data:", error);
+        setError(`Error fetching data: ${error.message}`);
       }
     };
 
