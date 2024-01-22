@@ -14,7 +14,8 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
     const fetchData = async () => {
       try {
         if (inputValue.trim() !== "") {
-          const token = "YOUR_PERSONAL_ACCESS_TOKEN"; // Replace with your actual token
+          const token = import.meta.env.VITE_REACT_APP_GITHUB_TOKEN || "";
+          // Replace with your actual token
           const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
 
           const response = await fetch(apiUrl, {
