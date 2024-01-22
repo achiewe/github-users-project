@@ -19,7 +19,7 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
             // Use cached data if available
             setUsers(JSON.parse(cachedData));
           } else {
-            const token = "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";
+            const token = process.env.REACT_APP_GITHUB_API_TOKEN;
             const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
 
             const response = await fetch(apiUrl, {
