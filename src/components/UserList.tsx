@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 import GithubUser from "../../types";
 
+// Define the props interface for the UserList component
 interface UserListProps {
   inputValue: string;
 }
 
-// function userList
+// UserList component definition
 const UserList = ({ inputValue }: UserListProps): JSX.Element => {
+  // State to store fetched GitHub users and handle errors
   const [users, setUsers] = useState<GithubUser[]>([]);
   const [, setError] = useState<string | null>(null);
 
-  // asdasdas
+  // Effect hook to fetch GitHub users based on the input value
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (inputValue.trim() !== "") {
           const token = import.meta.env.VITE_REACT_APP_GITHUB_TOKEN || "";
-          // Replace with your actual token
-          const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
 
+          const apiUrl = `https://api.github.com/search/users?q=${inputValue}`;
           const response = await fetch(apiUrl, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
-
           if (response.status === 200) {
             const data = await response.json();
             setUsers(data.items);
@@ -32,13 +32,10 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
             setError(`Error fetching data: ${response.status}`);
             const errorText = await response.text();
             console.error("Response text:", errorText);
-
-            // Handle rate limit exceeded error
             if (
               response.status === 403 &&
               errorText.includes("API rate limit exceeded")
             ) {
-              // Implement a delay before retrying
               setTimeout(() => {
                 fetchData();
               }, 60 * 60 * 1000); // Retry after 1 hour
@@ -52,14 +49,15 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
         setError(`Error fetching data: ${error.message}`);
       }
     };
-
     fetchData();
   }, [inputValue]);
 
+  // function to handle user clicks, opening github profile in a new tab
   const handleUserClick = (username: string) => {
     window.open(`https://github.com/${username}`, "_blank");
   };
 
+  // jsx structure for rendering the user list
   return (
     <div
       className={`${
