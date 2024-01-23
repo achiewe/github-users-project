@@ -74,7 +74,7 @@ const UserList = ({ inputValue }: UserListProps): JSX.Element => {
             <img
               src={user.avatar_url}
               alt={`${user.login}'s avatar`}
-              className="w-[50px] h-[50px] rounded-[30px]"
+              className="w-[50px] h-[50px] rounded-[30px] md:w-[60px] md:h-[60px]"
             />
             <h1 className="font-bold text-[16px] md:text-[26px] text-[#2B3442] leading-[23.7px] [word-spacing:-5px]">
               {user.login}
