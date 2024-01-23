@@ -1,9 +1,11 @@
+// importing the useState hook from React
 import { useState } from "react";
 import SearchInput from "./components/SearchInput";
 import UserList from "./components/UserList";
 
-// function App
+// App component definition
 function App(): JSX.Element {
+  // State to manage the input value
   const [inputValue, setInputValue] = useState<string>("");
 
   return (
